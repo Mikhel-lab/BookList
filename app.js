@@ -50,6 +50,19 @@ class UI {
       el.parentElement.parentElement.remove();
     }
   }
+
+  static showAlert(message, classname) {
+    const div = document.createElement("div");
+    div.className = `alert alert-${classname}`;
+    div.appendChild(document.createTextNode(message));
+
+    const container = document.querySelector(".container");
+    const form = document.querySelector("#book-form");
+    container.insertBefore(div, form);
+
+    // Clear validation
+    setTimeout(() => document.querySelector(".alert").remove(), 4000);
+  }
 }
 
 // EVENT- DISPLAY BOOKS
@@ -65,13 +78,17 @@ document.querySelector("#book-form").addEventListener("submit", e => {
   const author = document.querySelector("#author").value;
   const isbn = document.querySelector("#isbn").value;
 
-  const book = new Book(title, author, isbn);
+  if (title == "" || author == "" || isbn == "") {
+    UI.showAlert("Please fill in all the fields", "danger");
+  } else {
+    const book = new Book(title, author, isbn);
 
-  // Add to list
-  UI.addBookToList(book);
-
-  // Clear fields
-  UI.clearFields();
+    // Add to list
+    UI.addBookToList(book);
+    UI.showAlert("Book added", "success");
+    // Clear fields
+    UI.clearFields();
+  }
 });
 
 // EVENT DELETE BOOK
@@ -79,4 +96,5 @@ document.querySelector("#book-list").addEventListener("click", e => {
   // Delete book fromm list
   //   console.log(e.target);
   UI.deleteBook(e.target);
+  UI.showAlert("Book deleted", "warning");
 });
